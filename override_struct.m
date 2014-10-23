@@ -93,6 +93,10 @@ while true
       end
       % Jump to next input:
       iArgin = iArgin + 1;
+      
+   % Unknown input format
+   else
+      error('unknown input format')
    end
    
    % End loop when there is no more input:

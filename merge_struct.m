@@ -27,12 +27,24 @@ fAn   = cellfun(@(An) fieldnames(An), varargin,'un',0);
 
 % Merge all structures with the first structure:
 A = varargin{1};
+if ~isscalar(A)
+   error('merge_struct only works with scalar input structure A')
+end
 % Loop over all structures after the first:
 for iA = 2:length(fAn)   
    % Loop over all fieldnames in each structure:
    for ifn = 1:length(fAn{iA})
       % Add the field from the structure to the first structure:
-      A.(fAn{iA}{ifn}) = varargin{iA}.(fAn{iA}{ifn});
+      if isscalar( varargin{iA} )
+         % Structure elements are scalar:
+         A.(fAn{iA}{ifn}) = varargin{iA}.(fAn{iA}{ifn});
+      else
+         % Structure to merge is an array, we position all data into a cell:
+         tmpSize = size( varargin{iA} );
+         tmpData = cell(tmpSize);
+         [tmpData{:}] =  varargin{iA}.(fAn{iA}{ifn});
+         A.(fAn{iA}{ifn}) = tmpData;         
+      end
       % Note, this will override any fieldname in A if they exists in B.
    end
 end
